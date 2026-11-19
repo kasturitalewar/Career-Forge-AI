@@ -1,13 +1,20 @@
+
 import os
 import json
+import time
 from dotenv import load_dotenv
 from google import genai
 
 load_dotenv()
-client=genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-def analyze_resume(resume_text,role):
-    prompt=f"""
+api_key = os.getenv("GEMINI_API_KEY")
+
+client = genai.Client(api_key=api_key)
+
+
+def analyze_resume(resume_text, role):
+
+    prompt = f"""
 Analyze this resume for the target role: {role}.
 
 Return ONLY JSON with these keys:
@@ -37,14 +44,31 @@ Resume:
 {resume_text}
 """
 
-    try:
-        response=client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt
-        )
-        text=response.text.replace("```json","").replace("```","").strip()
-        result=json.loads(text)
-        result["role"]=role
-        return result
-    except Exception as e:
-        return {"error":str(e)}
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.7-flash",
+                contents=prompt
+            )
+
+            response_text = response.text
+
+            if not response_text:
+                return {"error": "Gemini returned an empty response."}
+
+            response_text = response_text.replace("```json", "").replace("```", "").strip()
+
+            result = json.loads(response_text)
+            result["role"] = role
+
+            return result
+
+        except Exception as e:
+
+            error_message = str(e)
+
+            if "503" in error_message and attempt < 2:
+                time.sleep(10 * (2 ** attempt))
+                continue
+
+            return {"error": error_message}
