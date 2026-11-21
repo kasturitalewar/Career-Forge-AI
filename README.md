@@ -3,7 +3,7 @@ AI Resume Analyzer & Career Guidance Platform:
 
 CareerForge AI is an AI-powered resume analyzer and career guidance platform built using Python, Streamlit, and Google Gemini API. It analyzes a resume according to the user's target role and provides practical guidance for improving career readiness.
 
-🔗 Live Demo: https://kasturitalewar-career-forge-ai-app-spf2rq.streamlit.app/
+🔗 CAREERFORGE AI(https://kasturitalewar-career-forge-ai-app-spf2rq.streamlit.app/)
 
  ✨ Features
 * Resume upload in PDF or DOCX format
